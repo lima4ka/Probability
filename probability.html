@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Probability of Getting What I Want</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #1e1e1e;
+      text-align: center;
+      padding: 40px;
+      color: #fff;
+    }
+    canvas {
+      width: 100%;
+      max-width: 900px;
+      height: 500px !important;
+      margin: auto;
+    }
+    h2 {
+      color: #f1c40f;
+      text-shadow: 0 0 10px #f1c40f;
+    }
+    .report-container {
+      border: 2px solid #f1c40f;
+      padding: 20px;
+      margin-top: 40px;
+      background-color: #333;
+      width: 80%;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(255, 223, 0, 0.7);
+    }
+    .report-container h3 {
+      color: #f1c40f;
+    }
+    .report-container p {
+      color: #fff;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="probabilityChart"></canvas>
+
+<!-- Lottery Probability Report Section -->
+<div class="report-container">
+  <h3>Анализ вероятности лотереи</h3>
+  <p>Выигрыш в лотерею часто считается "одним на миллион" событие. Давайте разберем:</p>
+  <p>
+    - Шанс выиграть обычную лотерею с джекпотом (например, 6 номеров из 49) примерно <strong>1 из 13 983 816</strong>.<br>
+    - Это означает, что вероятность выигрыша в лотерее примерно <strong>0.00000715%</strong>.<br>
+    - Другими словами, это невероятно маловероятно выиграть, но это все еще математически возможно!
+  </p>
+  <p><strong>Ваши шансы выиграть в лотерею по сравнению с вашей текущей вероятностью получить то, что вы хотите:</strong></p>
+  <p>
+    - Вероятность выигрыша в лотерею: <strong>0.00000715%</strong><br>
+    - Вероятность получения желаемого: <strong id="probabilityPercent"></strong>%
+  </p>
+  <p>Очевидно, что выигрыш в лотерею гораздо менее вероятен, чем достижение желаемых результатов!</p>
+</div>
+
+<script>
+  const LUCK = 88;
+  const EMOTION = 91;
+  const INTUITION = 77;
+  const COINCIDENCE = 42;
+  const UNIVERSE = 100;
+
+  const probabilityScore = ((LUCK * EMOTION) + Math.pow(INTUITION, 2)) / (COINCIDENCE * UNIVERSE);
+  const probabilityPercent = Math.min(100, Math.round(probabilityScore));
+
+  const fullLabels = [
+    "Получение Нобелевской премии прямо сейчас",
+    "Какова вероятность того, что я получу то, чего хочу",
+    "Попадание в молнию, когда вы катаетесь на дикой акуле в Тихом океане"
+  ];
+  const shortLabels = ["", "", ""];
+  const dataValues = [
+    0.0001 * 100,
+    probabilityPercent,
+    0.0000001 * 100
+  ];
+
+  const ctx = document.getElementById("probabilityChart").getContext("2d");
+  const chart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: shortLabels,
+      datasets: [{
+        label: "Chance (%)",
+        data: dataValues,
+        borderColor: "rgba(255, 223, 0, 0.9)",
+        backgroundColor: "rgba(255, 223, 0, 0.2)",
+        fill: true,
+        tension: 0.4,
+        pointRadius: 6,
+        pointHoverRadius: 10,
+        pointBackgroundColor: "rgba(255, 255, 0, 1)",
+        pointBorderColor: "#fff",
+        pointHoverBackgroundColor: "#ffff33",
+        pointHoverBorderColor: "#ffffff",
+        segment: {
+          borderColor: "rgba(255, 223, 0, 0.9)",
+          borderWidth: 3,
+        },
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          display: false
+        },
+        tooltip: {
+          backgroundColor: "#ffff66",
+          titleColor: "#000",
+          bodyColor: "#000",
+          titleFont: { size: 14, weight: 'bold' },
+          bodyFont: { size: 13 },
+          displayColors: false,
+          callbacks: {
+            label: function(context) {
+              const index = context.dataIndex;
+              const label = fullLabels[index];
+              const value = context.parsed.y.toFixed(6) + " %";
+              return label + ": " + value;
+            },
+            // Adding a custom callback for displaying data on hover over points
+            afterLabel: function(context) {
+              const value = context.raw.toFixed(2) + "%";
+              return "Вероятность: " + value;
+            }
+          }
+        },
+        datalabels: {
+          color: '#f1c40f',
+          align: 'top',
+          anchor: 'end',
+          formatter: function(value) {
+            return value.toFixed(2) + '%';
+          },
+          font: {
+            weight: 'bold',
+            size: 13
+          },
+          textShadowColor: 'rgba(255, 255, 0, 1)',
+          textShadowBlur: 10
+        }
+      },
+      scales: {
+        x: {
+          ticks: {
+            display: false
+          },
+          grid: {
+            color: "rgba(255, 255, 0, 0.2)"
+          }
+        },
+        y: {
+          beginAtZero: true,
+          max: 100,
+          ticks: {
+            color: "#fff"
+          },
+          title: {
+            display: true,
+            text: "Probability (%)",
+            color: "#fff"
+          },
+          grid: {
+            color: "rgba(255, 255, 0, 0.2)"
+          }
+        }
+      }
+    },
+    plugins: [ChartDataLabels]
+  });
+
+  // Update the probability percentage dynamically in the HTML
+  document.getElementById("probabilityPercent").textContent = probabilityPercent;
+
+  console.log("Probability (complex formula):", probabilityPercent + "%");
+</script>
+
+</body>
+</html>
